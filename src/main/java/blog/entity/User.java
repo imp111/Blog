@@ -2,6 +2,9 @@ package blog.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -9,15 +12,27 @@ public class User {
     private String email;
     private String fullName;
     private String password;
+    private Set<Role> roles;
 
     public User(String email, String fullName, String password) {
-        setEmail(email);
-        setFullName(fullName);
-        setPassword(password);
+        this.email = email;
+        this.fullName = fullName;
+        this.password = password;
+        this.roles = new HashSet<>();
     }
 
     public User() {
 
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER) // the fetch will be of type EAGER, we want the roles to be loaded together with the user
+    @JoinTable(name = "user_roles") // this will create joining table for our Role-User relation and name it "user_roles"
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Id // @Id - tells Hibernate that this field will be primary key for the db
